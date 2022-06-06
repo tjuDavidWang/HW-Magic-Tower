@@ -63,6 +63,7 @@ list(APPEND GAME_SOURCE
      Classes/FourDirectionController.cpp
      Classes/Player.cpp
      Classes/TollgateScene.cpp
+     Classes/MusicController.cpp
      )
 list(APPEND GAME_HEADER
      Classes/Controller.h
@@ -73,6 +74,7 @@ list(APPEND GAME_HEADER
      Classes/FourDirectionController.h
      Classes/Player.h
      Classes/TollgateScene.h
+     Classes/MusicController.h
      )
 
 if(ANDROID)
