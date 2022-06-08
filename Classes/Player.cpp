@@ -3,15 +3,24 @@
 bool Player::init()
 {
 	isJumping = false;
+	hp = 1000;
+	atk = 100;
+	def = 100;
+	exp = 0;
+	level = 0;
+	coin = 0;
+	yellowKey = 0;
+	blueKey = 0;
+	redKey = 0;
 	return true;
 }
 
 void Player::runup()
 {
 	SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
-	
+
 	//将图片加到缓存中去
-	frameCache->addSpriteFramesWithFile("hero.plist","hero.png");
+	frameCache->addSpriteFramesWithFile("hero.plist", "hero.png");
 
 	SpriteFrame* frame = NULL;
 	Vector<SpriteFrame*>frameList;
@@ -137,4 +146,3 @@ void Player::rundown()
 //
 //	return Point(x, y);
 //}
-
