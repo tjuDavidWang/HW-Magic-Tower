@@ -64,6 +64,10 @@ list(APPEND GAME_SOURCE
      Classes/Player.cpp
      Classes/TollgateScene.cpp
      Classes/MusicController.cpp
+     Classes/StartScene.cpp
+     Classes/Prop.cpp
+     Classes/Enemy.cpp
+     Classes/BattleScene.cpp
      )
 list(APPEND GAME_HEADER
      Classes/Controller.h
@@ -75,6 +79,10 @@ list(APPEND GAME_HEADER
      Classes/Player.h
      Classes/TollgateScene.h
      Classes/MusicController.h
+     Classes/StartScene.h
+     Classes/Prop.h
+     Classes/Enemy.h
+     Classes/BattleScene.h
      )
 
 if(ANDROID)
