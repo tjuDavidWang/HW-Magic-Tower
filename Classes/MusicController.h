@@ -5,7 +5,7 @@
 #include"cocos2d.h"
 USING_NS_CC;
 
-class SoundPlayer :public Layer {
+class SoundPlayer :public Scene {
 public:
 	SoundPlayer();
 

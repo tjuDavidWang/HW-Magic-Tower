@@ -1,6 +1,11 @@
 #include "TollgateScene.h"
 #include"Player.h"
 #include"FourDirectionController.h"
+#include "MusicController.h"
+
+
+
+
 Scene* TollgateScene::createScene()
 {
 	auto scene = Scene::create();
@@ -12,19 +17,22 @@ Scene* TollgateScene::createScene()
 bool TollgateScene::init()
 {
  
-	if (!Layer::init()) { return false; }
+	if (!Scene::init()) { return false; }
 	Director::getInstance()->setProjection(Director::Projection::_2D);
 	//获取屏幕显示大小
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 
 	//加载Tiled地图，添加到场景中
-	TMXTiledMap* map = TMXTiledMap::create("floor01.tmx");
+	TMXTiledMap* map = TMXTiledMap::create("Base.tmx");
 	map->setAnchorPoint(Vec2::ANCHOR_MIDDLE);
 	map->setPosition(Vec2(visibleSize / 2));
 	this->addChild(map);
 
 	//加载玩家
 	addPlayer(map);
+
+	Button();
+
 	return true;
 }
 
@@ -73,6 +81,78 @@ void TollgateScene::addPlayer(TMXTiledMap* map) {
 	//else {
 
 	//}*/
+		
 	
+		
+		//
 	
+}
+
+void TollgateScene::Button()
+{
+	auto pauseBtn = Button::create("pause.png");
+	auto resumeBtn = Button::create("resume.png");
+	auto exitBtn = Button::create("exit.png");
+	auto musicplayBtn = Button::create("music.png");
+	auto musicstopBtn = Button::create("stopmusic.png");
+	pauseBtn->setPosition(Vec2(65, 60));
+	exitBtn->setPosition(Vec2(125, 60));
+	musicplayBtn->setPosition(Vec2(65, 35));
+	pauseBtn->setLocalZOrder(2);
+	this->addChild(pauseBtn);
+	this->addChild(resumeBtn);
+	this->addChild(exitBtn);
+	this->addChild(musicplayBtn);
+	resumeBtn->setVisible(false);
+	pauseBtn->addClickEventListener([pauseBtn, resumeBtn, this](Ref*)
+		{
+			//游戏暂停
+			Director::getInstance()->pause();
+
+			//创建暂停界面
+			auto pauseLayer = Button::create();
+			pauseLayer->setTag(1);//设置标签
+
+			//关闭音乐
+			//AudioEngine::pauseAll();
+
+			//显示恢复按钮
+			resumeBtn->setVisible(true);
+			resumeBtn->setPosition(Vec2(65, 60));
+
+			//隐藏暂停按钮
+			pauseBtn->setVisible(false);
+
+		});
+
+	resumeBtn->addClickEventListener([pauseBtn, resumeBtn, this](Ref*)
+		{
+			//游戏恢复
+			Director::getInstance()->resume();
+
+			//移除暂停界面
+			this->removeChildByTag(1);//移除标签为1的节点
+
+			//隐藏恢复按钮
+			resumeBtn->setVisible(false);
+
+			//显示暂停按钮
+			pauseBtn->setVisible(true);
+
+		});
+	
+	exitBtn->addClickEventListener([exitBtn, this](Ref*)
+		{
+			//游戏退出
+			Director::getInstance()->end();
+		});
+		
+	musicplayBtn->addClickEventListener([musicplayBtn, musicstopBtn, this](Ref*)
+		{
+			//切换到音乐控制场景
+			Director::getInstance()->pushScene(SoundPlayer::create());
+
+		});
+
+
 }

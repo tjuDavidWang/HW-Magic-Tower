@@ -1,6 +1,7 @@
 #include "MusicController.h"
 #include "ui/CocosGUI.h"
 #include "cocos-ext.h"
+#include "TollgateScene.h"
 using namespace ui;
 
 #include "AudioEngine.h"
@@ -19,11 +20,11 @@ Scene* SoundPlayer::createScene() {
 	return scene;
 }
 bool SoundPlayer::init() {
-	if (!Layer::init()) {
+	if (!Scene::init()) {
 		return false;
 	}
 	auto visibleSize = Director::getInstance()->getVisibleSize();
-
+	AudioEngine::stopAll();
 
 	//当前测试标签描述
 	auto test_label = Label::createWithSystemFont("Sound Player", "Arial Black", 40);
@@ -77,9 +78,18 @@ bool SoundPlayer::init() {
 	Resume_Item->setPosition(Vec2(visibleSize.width / 4, 0));
 	Resume_Item->setFontNameObj("Arial Black");
 
-	auto menu = Menu::create(Play_Item, Stop_Item, Pause_Item, Resume_Item, NULL);
-	addChild(menu, 10);
+	//
+	auto Return_Item = MenuItemFont::create("Return", [&](Ref* sender) {
+		Director::getInstance()->popScene();
+		
+		});
+	Return_Item->setPosition(Vec2(0,-50));
+	Return_Item->setFontNameObj("Arial Black");
+	
 
+	auto menu = Menu::create(Play_Item, Stop_Item, Pause_Item, Resume_Item,Return_Item, NULL);
+	addChild(menu, 10);
+	
 	//初始化控制音量的滑动条
 	Slider* slider = Slider::create();
 	slider->loadBarTexture("Slider_Back.png"); // what the slider looks like
@@ -103,7 +113,7 @@ bool SoundPlayer::init() {
 }
 
 void SoundPlayer::onEnter() {
-	Layer::onEnter();
+	Scene::onEnter();
 
 	//声音引擎初始化
 	AudioEngine::lazyInit();
@@ -118,6 +128,7 @@ void SoundPlayer::onExit() {
 	if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
 		AudioEngine::uncache("music/background.mp3");//清除音乐文件的缓存
 	}
-	Layer::onExit();
+	Scene::onExit();
 }
+
 
