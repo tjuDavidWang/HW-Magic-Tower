@@ -1,103 +1,86 @@
 #include "BattleScene.h"
+#include "NumberChange.h"
 
 
-DigitalBeatText::DigitalBeatText()
-	:m_txt(nullptr)
-	, m_lastValue(0)
-	, m_newValue(0)
-	, m_valueGap(0)
-	, m_scheduleInterval(30.0f / 60.f)
-	, m_isReverse(false)
+Layer* BattleScene::createScene()
 {
-
+	return BattleScene::createScene();
 }
 
-DigitalBeatText::~DigitalBeatText()
+bool BattleScene::init()
 {
-}
-
-DigitalBeatText* DigitalBeatText::create(int value)
-{
-	auto pRet = new DigitalBeatText;
-	if (pRet->init(value))
-	{
-		pRet->autorelease();
-		return pRet;
-	}
-	CC_SAFE_DELETE(pRet);
-	return nullptr;
-}
-
-bool DigitalBeatText::init(int value)
-{
-	if (!Node::init()) {
+	if (!Layer::init())
 		return false;
-	}
-	char buff[16] = { 0 };
-	m_txt = ui::Text::create();
-	m_txt->setFontSize(36);
-	sprintf(buff, "%d", value);
-	m_txt->setString(buff);
-	this->addChild(m_txt);
-	m_lastValue = value;
+
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	//添加战斗图片
+	auto battleSprite = Sprite::create("Battle.png");
+	battleSprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, 300));
+	this->addChild(battleSprite, 0);
+
+	//添加怪物图片
+	auto monsterSprite = Sprite::create("enemy_33.png");
+	monsterSprite->setPosition(Vec2(88, 340));
+	this->addChild(monsterSprite, 0);
+
+	
+	//设置玩家扣血数字动画
+	auto PlayerInitial_HP = 160;
+	auto DigPlayer_HP = DigitalBeatText::create(PlayerInitial_HP, 24);
+	DigPlayer_HP->setPosition(460, 360);
+	this->addChild(DigPlayer_HP);
+	auto PlayerFinal_HP = 60;
+	DigPlayer_HP->setValue(PlayerFinal_HP, -8);
+
+	//设置怪物扣血数字动画
+	auto MonsterInitial_HP = 100;
+	auto DigMonster_HPT = DigitalBeatText::create(MonsterInitial_HP, 24);
+	DigMonster_HPT->setPosition(170,360);
+	this->addChild(DigMonster_HPT);
+	auto MonsterFinal_HP = 0;
+	DigMonster_HPT->setValue(MonsterFinal_HP, -8);
+
+	//设置玩家攻击值
+	auto PlayerAtk = 160;
+	auto DigPlayerAtk = DigitalBeatText::create(PlayerAtk, 24);
+	DigPlayerAtk->setPosition(460, 300);
+	this->addChild(DigPlayerAtk);
+
+	//设置怪物攻击值
+	auto MonsterAtk = 20;
+	auto DigMonsterAtk = DigitalBeatText::create(MonsterAtk, 24);
+	DigMonsterAtk->setPosition(170, 300);
+	this->addChild(DigMonsterAtk);
+
+	//设置玩家防御值
+	auto PlayerDef = 160;
+	auto DigPlayerDef = DigitalBeatText::create(PlayerDef, 24);
+	DigPlayerDef->setPosition(460, 240);
+	this->addChild(DigPlayerDef);
+
+	//设置怪物防御值
+	auto MonsterDef = 20;
+	auto DigMonsterDef = DigitalBeatText::create(MonsterDef, 24);
+	DigMonsterDef->setPosition(170, 240);
+	this->addChild(DigMonsterDef);
+
+	//创建结束（跳过）按钮
+	auto closeItem = MenuItemImage::create(
+		"finish_battle_1.png",
+		"finish_battle_2.png",
+		CC_CALLBACK_1(BattleScene::menuCloseCallback, this));
+	closeItem->setPosition(Vec2(330, 200));
+	auto menu = Menu::create(closeItem, NULL);
+	menu->setPosition(Vec2::ZERO);
+	this->addChild(menu, 1);
+
 	return true;
 }
 
-void DigitalBeatText::setValue(int newValue, int Gap)
+void BattleScene::menuCloseCallback(Ref* pSender)
 {
-	m_valueGap = Gap;
-	m_isReverse = newValue < m_lastValue;
-	stopRoll();
-	m_newValue = newValue;
-	startRoll();
-}
-
-//void DigitalBeatText::setValueNoAction(int newValue)
-//{
-//	m_lastValue = newValue;
-//	m_newValue = newValue;
-//	m_txt->setString(cocos2d::StringUtils::toString(m_lastValue));
-//}
-
-void DigitalBeatText::startRoll()
-{
-	/*int count = m_newValue - m_lastValue;*/
-	//if (count > 0) {
-	//	//m_valueGap = ceil(count / (1.0 / m_scheduleInterval));
-	//	m_valueGap = -8;
-	//}
-	//else {
-	//	//m_valueGap = floor(count / (1.0 / m_scheduleInterval));
-	//	m_valueGap = -8;
-	//}
-	schedule(CC_SCHEDULE_SELECTOR(DigitalBeatText::onTimeHandler), m_scheduleInterval);
-}
-
-void DigitalBeatText::stopRoll()
-{
-	unschedule(CC_SCHEDULE_SELECTOR(DigitalBeatText::onTimeHandler));
-}
-
-void DigitalBeatText::onTimeHandler(float dt)
-{
-	m_lastValue += m_valueGap;
-	bool stop = false;
-
-	if (!m_isReverse)
-	{
-		if (m_lastValue >= m_newValue) {
-			m_lastValue = m_newValue;
-			stop = true;
-		}
-	}
-	else {
-		if (m_lastValue <= m_newValue) {
-			m_lastValue = m_newValue;
-			stop = true;
-		}
-	}
-	m_txt->setString(cocos2d::StringUtils::toString(m_lastValue));
-	if (stop) {
-		this->stopRoll();
-	}
+	//关闭战斗层
+	this->removeFromParentAndCleanup(true);
 }

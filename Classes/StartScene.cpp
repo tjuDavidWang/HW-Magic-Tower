@@ -17,27 +17,28 @@ bool StartScene::init()
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	//创建“魔塔”精灵
 	auto sprite = Sprite::create("MagicTower.png");
 	
 	// position the sprite on the center of the screen
-	sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, 220));
+	sprite->setPosition(Vec2(visibleSize.width / 2 + origin.x, 330));
 
 	// add the sprite as a child to this layer
 	this->addChild(sprite, 0);
 	
 
 	//添加"开始"及"离开"标签
-	auto StartGame = Label::createWithTTF("Start", "fonts/Marker Felt.ttf", 20);
-	StartGame->setPosition(Vec2(origin.x + visibleSize.width / 2, 130));
+	auto StartGame = Label::createWithTTF("Start", "fonts/Marker Felt.ttf", 36);
+	StartGame->setPosition(Vec2(origin.x + visibleSize.width / 2, 200));
 	this->addChild(StartGame);
 
-	auto ExitGame = Label::createWithTTF("Exit", "fonts/Marker Felt.ttf", 20);
-	ExitGame->setPosition(Vec2(origin.x + visibleSize.width / 2,100));
+	auto ExitGame = Label::createWithTTF("Exit", "fonts/Marker Felt.ttf", 36);
+	ExitGame->setPosition(Vec2(origin.x + visibleSize.width / 2,130));
 	this->addChild(ExitGame);
 
 	//设置按键位置
-	auto Startlocation = Rect(220, 120, 40, 20);
-	auto Exitlocation = Rect(220, 90, 34, 20);
+	auto Startlocation = Rect(277, 190, 80, 36);
+	auto Exitlocation = Rect(278, 120, 68, 36);
 	
 	EventListenerTouchOneByOne* MouseListner = EventListenerTouchOneByOne::create();
 	
