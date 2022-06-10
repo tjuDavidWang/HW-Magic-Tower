@@ -8,8 +8,8 @@ using namespace ui;
 
 
 SoundPlayer::SoundPlayer() {
-	//±äÁ¿³õÊ¼»¯
-	_audioID = AudioEngine::INVALID_AUDIO_ID;//Õâ¸öÖµÎªAudioEngineÖĞµÄÒ»¸ö³õÊ¼Öµ£¬Îª-1
+	//å˜é‡åˆå§‹åŒ–
+	_audioID = AudioEngine::INVALID_AUDIO_ID;//è¿™ä¸ªå€¼ä¸ºAudioEngineä¸­çš„ä¸€ä¸ªåˆå§‹å€¼ï¼Œä¸º-1
 	_loop = false;
 
 }
@@ -26,7 +26,7 @@ bool SoundPlayer::init() {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	AudioEngine::stopAll();
 
-	//µ±Ç°²âÊÔ±êÇ©ÃèÊö
+	//å½“å‰æµ‹è¯•æ ‡ç­¾æè¿°
 	auto test_label = Label::createWithSystemFont("Sound Player", "Arial Black", 40);
 	test_label->setPosition(Vec2(visibleSize.width / 2, visibleSize.height - test_label->getContentSize().height));
 	this->addChild(test_label);
@@ -34,11 +34,11 @@ bool SoundPlayer::init() {
 	//Play
 	auto Play_Item = MenuItemFont::create("Play", [&](Ref* sender) {
 		if (_audioID == AudioEngine::INVALID_AUDIO_ID) {
-			_audioID = AudioEngine::play2d("bgm.mp3", _loop);//²¥·ÅÒôÀÖÎÄ¼ş
+			_audioID = AudioEngine::play2d("bgm.mp3", _loop);//æ’­æ”¾éŸ³ä¹æ–‡ä»¶
 		}
 		if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
 			AudioEngine::setFinishCallback(_audioID, [&](int id, const std::string& filePath) {
-				_audioID = AudioEngine::INVALID_AUDIO_ID; //²¥·ÅÍê³ÉÊ±£¬ÔÙ´Î³õÊ¼»¯ÉùÒôÎÄ¼şID
+				_audioID = AudioEngine::INVALID_AUDIO_ID; //æ’­æ”¾å®Œæˆæ—¶ï¼Œå†æ¬¡åˆå§‹åŒ–å£°éŸ³æ–‡ä»¶ID
 				});
 		}
 
@@ -50,7 +50,7 @@ bool SoundPlayer::init() {
 	//Stop
 	auto Stop_Item = MenuItemFont::create("Stop", [&](Ref* sender) {
 		if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
-			AudioEngine::stop(_audioID);//Í£Ö¹²¥·ÅÒôÀÖÎÄ¼ş
+			AudioEngine::stop(_audioID);//åœæ­¢æ’­æ”¾éŸ³ä¹æ–‡ä»¶
 			_audioID = AudioEngine::INVALID_AUDIO_ID;
 		}
 
@@ -61,7 +61,7 @@ bool SoundPlayer::init() {
 	//Pause
 	auto Pause_Item = MenuItemFont::create("Pause", [&](Ref* sender) {
 		if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
-			AudioEngine::pause(_audioID);//ÔİÍ£²¥·ÅÒôÀÖÎÄ¼ş
+			AudioEngine::pause(_audioID);//æš‚åœæ’­æ”¾éŸ³ä¹æ–‡ä»¶
 		}
 
 		});
@@ -71,15 +71,15 @@ bool SoundPlayer::init() {
 	//Resume
 	auto Resume_Item = MenuItemFont::create("Resume", [&](Ref* sender) {
 		if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
-			AudioEngine::resume(_audioID);//»Ö¸´²¥·ÅÒôÀÖÎÄ¼ş
+			AudioEngine::resume(_audioID);//æ¢å¤æ’­æ”¾éŸ³ä¹æ–‡ä»¶
 		}
 
 		});
 	Resume_Item->setPosition(Vec2(visibleSize.width / 4, 0));
 	Resume_Item->setFontNameObj("Arial Black");
 
-	//
-	auto Return_Item = MenuItemFont::create("Return", [&](Ref* sender) {
+	//è¿”å›æ¸¸æˆ
+	auto Return_Item = MenuItemFont::create("Back", [&](Ref* sender) {
 		Director::getInstance()->popScene();
 		
 		});
@@ -90,7 +90,7 @@ bool SoundPlayer::init() {
 	auto menu = Menu::create(Play_Item, Stop_Item, Pause_Item, Resume_Item,Return_Item, NULL);
 	addChild(menu, 10);
 	
-	//³õÊ¼»¯¿ØÖÆÒôÁ¿µÄ»¬¶¯Ìõ
+	//åˆå§‹åŒ–æ§åˆ¶éŸ³é‡çš„æ»‘åŠ¨æ¡
 	Slider* slider = Slider::create();
 	slider->loadBarTexture("Slider_Back.png"); // what the slider looks like
 	slider->loadSlidBallTextures("SliderNode_Normal.png", "SliderNode_Press.png", "SliderNode_Disable.png");
@@ -102,7 +102,7 @@ bool SoundPlayer::init() {
 	slider->addEventListener([&](Ref* sender, Slider::EventType type)
 		{
 				auto s = dynamic_cast<Slider*>(sender);
-				auto volum = 1.0f * s->getPercent() / s->getMaxPercent();//¼ÆËãÒôÁ¿µÄÖµ£¬ÒôÁ¿µÄÖµÓ¦Îª£º0~1Ö®¼ä
+				auto volum = 1.0f * s->getPercent() / s->getMaxPercent();//è®¡ç®—éŸ³é‡çš„å€¼ï¼ŒéŸ³é‡çš„å€¼åº”ä¸ºï¼š0~1ä¹‹é—´
 				if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
 					AudioEngine::setVolume(_audioID, volum);
 				}
@@ -115,18 +115,18 @@ bool SoundPlayer::init() {
 void SoundPlayer::onEnter() {
 	Scene::onEnter();
 
-	//ÉùÒôÒıÇæ³õÊ¼»¯
+	//å£°éŸ³å¼•æ“åˆå§‹åŒ–
 	AudioEngine::lazyInit();
 
-	//¼ÓÔØÉùÒôÎÄ¼ş
+	//åŠ è½½å£°éŸ³æ–‡ä»¶
 	AudioEngine::preload("music/background.mp3");
 
-	//´òÓ¡¼ÓÔØĞÅÏ¢
+	//æ‰“å°åŠ è½½ä¿¡æ¯
 	CCLOG("OnEnter....");
 }
 void SoundPlayer::onExit() {
 	if (_audioID != AudioEngine::INVALID_AUDIO_ID) {
-		AudioEngine::uncache("music/background.mp3");//Çå³ıÒôÀÖÎÄ¼şµÄ»º´æ
+		AudioEngine::uncache("music/background.mp3");//æ¸…é™¤éŸ³ä¹æ–‡ä»¶çš„ç¼“å­˜
 	}
 	Scene::onExit();
 }
