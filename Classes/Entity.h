@@ -6,7 +6,7 @@
 #include"Controller.h"
 using namespace cocos2d;
 
-class Entity :public Sprite,public ControllerListener {
+class Entity :public Sprite {
 public:
 	//绑定精灵对象
 	void bindSprite(Sprite* sprite);
@@ -14,8 +14,8 @@ public:
 	//设置控制器
 	void setController(Control* controller);
 
-	//实现SimpleMoveListener接口的方法
-	virtual void setTagPosition(int x, int y);
+	//判断主角到达位置后发生事件
+	virtual bool setTagPosition(int x, int y);
 	virtual Point getTagPosition();
 protected:
 	Sprite* m_sprite;
