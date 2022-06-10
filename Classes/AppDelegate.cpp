@@ -28,7 +28,7 @@
 #include "StartScene.h"
 //#include "TollgateScene.h"
 // #define USE_AUDIO_ENGINE 1
-#include "GamePause.h"
+//#include "GamePause.h"
 
 #if USE_AUDIO_ENGINE
 #include "audio/include/AudioEngine.h"

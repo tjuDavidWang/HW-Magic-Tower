@@ -8,10 +8,15 @@ class Player :public Entity {
 public:
 	CREATE_FUNC(Player);
 	virtual bool init();
+	//向四个方向行走动画
 	void runup();
 	void rundown();
-	/*void setTiledMap(TMXTiledMap* map);*/
-	/*virtual void setTagPosition(int x, int y);*/
+	void runleft();
+	void runright();
+
+	void setTiledMap(TMXTiledMap* map, Point Pos);
+	virtual bool setTagPosition(int x, int y);
+	void Move(EventKeyboard::KeyCode keyCode, Event* event);
 
 	int get_hp() { return hp; }
 	int get_atk() { return atk; }
@@ -27,12 +32,20 @@ private:
 	//标记主角是否碰撞障碍物
 	bool  isJumping;
 
-	//检测碰撞的地图层
-	TMXLayer* meta;
+	//检测墙壁的地图层
+	TMXLayer* wall;
+
+	//获取物品的图层
+	TMXLayer* item;
+
+	//检测门的地图层
+	TMXLayer* door;
 
 	//将像素坐标转换为地图格子坐标
-	/*Point tileCoordForPosition(Point pos);*/
+	Point tileCoordForPosition(Point pos);
+
 	TMXTiledMap* m_map;
+	Point Pos;
 
 	int hp;//生命值：HitPoint
 	int atk;//攻击力：Attack
