@@ -1,5 +1,6 @@
 #include "StartScene.h"
 #include "TollgateScene.h"
+#include"BattleScene.h"
 
 Scene* StartScene::createScene()
 {

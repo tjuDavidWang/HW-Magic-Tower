@@ -1,8 +1,7 @@
 #pragma once
-
 #ifndef __AttributeSystem__H_
 #define __AttributeSystem__H_
-
+#include"Player.h"
 #include "cocos2d.h"
 USING_NS_CC;
 
@@ -12,11 +11,10 @@ using namespace ui;
 class AttributeSystem : public Layer
 {
 public:
-	AttributeSystem();
-	~AttributeSystem();
-	//创建开始界面
-	static Layer* createScene();
 
+	//创建开始界面
+	static Layer* createScene(Player* player);
+	/*void update(float dt);*/
 	//场景初始化
 	virtual bool init();
 
@@ -24,17 +22,18 @@ public:
 	std::string Change(int Number);
 
 	CREATE_FUNC(AttributeSystem);
-private:
-	int playergrade;
-	int playerhp;
-	int playeratk;
-	int playerdef;
-	int playercoin;
-	int playerexp;
-	int redkey;
-	int bluekey;
-	int yellowkey;
-	int floornum;
-	
+public:
+	static int playergrade;
+	static int playerhp;
+	static int playeratk;
+	static int playerdef;
+	static int playercoin;
+	static int playerexp;
+	static int redkey;
+	static int bluekey;
+	static int yellowkey;
+	static int floornum;
+
 };
+
 #endif

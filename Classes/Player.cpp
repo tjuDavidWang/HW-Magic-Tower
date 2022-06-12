@@ -3,15 +3,16 @@
 
 bool Player::init()
 {
+	//角色属性
 	hp = 1000;
 	atk = 100;
 	def = 100;
 	exp = 0;
 	level = 0;
 	coin = 0;
-	yellowKey = 0;
-	blueKey = 0;
-	redKey = 0;
+	yellowKey = 3;
+	blueKey = 1;
+	redKey = 1;
 	// 键盘事件监听
 	auto keyListener = EventListenerKeyboard::create();
 	keyListener->onKeyPressed = CC_CALLBACK_2(Player::Move, this);
@@ -112,7 +113,6 @@ void Player::runright()
 
 	//将图片加到缓存中去
 	frameCache->addSpriteFramesWithFile("hero.plist", "hero.png");
-
 	SpriteFrame* frame = NULL;
 	Vector<SpriteFrame*>frameList;
 
@@ -135,34 +135,43 @@ void Player::runright()
 }
 
 
-void Player::setTiledMap(TMXTiledMap* map, Point Pos)
+void Player::setTiledMap(TMXTiledMap* map, Point Pos, Layer* layer1, Layer* layer2)
 {
 
 	this->m_map = map;
 	this->Pos = Pos;
+	this->mLayer1 = layer1;
+	this->mLayer2 = layer2;
 	//保存图层引用
 	this->wall = m_map->getLayer("wall");
 	this->item = m_map->getLayer("item");
 	this->door = m_map->getLayer("door");
-	//this->meta->setVisible(false);
+	this->stair = m_map->getLayer("stair");
+	this->enemy = m_map->getLayer("enemy");
+	this->shop = m_map->getLayer("shop");
 
 }
 //
 bool Player::setTagPosition(int x, int y)
 {
-
+	//取主角当前位置坐标
 	Point dstPos = Point(x, y);
+	//获取该坐标在格子中位置
 	Point tiledPos = tileCoordForPosition(Point(dstPos.x, dstPos.y));
+	//获取该图层格子唯一标识
 	int tiledGid = wall->getTileGIDAt(tiledPos);
+	//标识不为0.代表存在这个格子
 	if (tiledGid != 0) {
 		Value properties = m_map->getPropertiesForGID(tiledGid);
 		ValueMap propertiesMap = properties.asValueMap();
+		//获取Wall属性判断墙壁
 		if (propertiesMap.find("Wall") != propertiesMap.end()) {
 			Value prop = properties.asValueMap().at("Wall");
 			return false;
 		}
 
 	}
+	//判断该格是否有道具
 	int tiledGid1 = item->getTileGIDAt(tiledPos);
 	if (tiledGid1 != 0) {
 		Value properties1 = m_map->getPropertiesForGID(tiledGid1);
@@ -170,52 +179,148 @@ bool Player::setTagPosition(int x, int y)
 		if (propertiesMap1.find("YellowKey") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("YellowKey");
 			item->removeTileAt(tiledPos);
+			yellowKey++;
 		}
 		if (propertiesMap1.find("BlueKey") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("BlueKey");
 			item->removeTileAt(tiledPos);
+			blueKey++;
 		}
 		if (propertiesMap1.find("RedKey") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("RedKey");
 			item->removeTileAt(tiledPos);
+			redKey++;
 		}
 		if (propertiesMap1.find("RedGem") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("RedGem");
 			item->removeTileAt(tiledPos);
+			atk++;
 		}
 		if (propertiesMap1.find("BlueGem") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("BlueGem");
 			item->removeTileAt(tiledPos);
+			def++;
 		}
 		if (propertiesMap1.find("RedBottle") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("RedBottle");
 			item->removeTileAt(tiledPos);
+			hp += 50;
 		}
 		if (propertiesMap1.find("BlueBottle") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("BlueBottle");
 			item->removeTileAt(tiledPos);
+			hp += 200;
 		}
 		if (propertiesMap1.find("Sword") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("Sword");
 			item->removeTileAt(tiledPos);
+			atk += 10;
 		}
 		if (propertiesMap1.find("Shell") != propertiesMap1.end()) {
 			Value prop1 = properties1.asValueMap().at("Shell");
 			item->removeTileAt(tiledPos);
+			def += 10;
 		}
 
 
 	}
+	//判断该格是否存在门
 	int tiledGid2 = door->getTileGIDAt(tiledPos);
 	if (tiledGid2 != 0) {
 		Value properties2 = m_map->getPropertiesForGID(tiledGid2);
 		ValueMap propertiesMap2 = properties2.asValueMap();
 		if (propertiesMap2.find("YellowDoor") != propertiesMap2.end()) {
 			Value prop2 = properties2.asValueMap().at("YellowDoor");
+			if (yellowKey > 0) {
+				yellowKey--;
+				door->removeTileAt(tiledPos);
+			}
+			else
+				return false;
+		}
+		if (propertiesMap2.find("BlueDoor") != propertiesMap2.end()) {
+			Value prop2 = properties2.asValueMap().at("BlueDoor");
+			if (blueKey > 0) {
+				blueKey--;
+				door->removeTileAt(tiledPos);
+			}
+			else
+				return false;
+			
+		}
+		if (propertiesMap2.find("GreenDoor") != propertiesMap2.end()) {
+			Value prop2 = properties2.asValueMap().at("GreenDoor");
 			door->removeTileAt(tiledPos);
+		}
+	}
+    //判断该格是否有敌人，若有，调用战斗场景
+	int tiledGid3 = enemy->getTileGIDAt(tiledPos);
+	if (tiledGid3 != 0) {
+		Value properties3 = m_map->getPropertiesForGID(tiledGid3);
+		ValueMap propertiesMap3 = properties3.asValueMap();
+		if (propertiesMap3.find("Enemy0") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy0");
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy1") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy1");
+			mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy2") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy2");
+			//mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy3") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy3");
+			//mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy4") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy4");
+			//mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy5") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy5");
+			//mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy6") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy6");
+			//mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+		if (propertiesMap3.find("Enemy7") != propertiesMap3.end()) {
+			Value prop2 = properties3.asValueMap().at("Enemy7");
+			//mLayer1->setVisible(true);
+			enemy->removeTileAt(tiledPos);
+		}
+	}
+	//判断该位置是否有商店，若有，调用商店场景
+	int tiledGid4 = shop->getTileGIDAt(tiledPos);
+	if (tiledGid4 != 0) {
+		Value properties4 = m_map->getPropertiesForGID(tiledGid4);
+		ValueMap propertiesMap4 = properties4.asValueMap();
+		if (propertiesMap4.find("Shop") != propertiesMap4.end()) {
+			Value prop4 = properties4.asValueMap().at("Shop");
+			mLayer2->setVisible(true);
 		}
 
 	}
+	//判断该位置是否有楼梯，若有，进入下一层
+	int tiledGid5 = stair->getTileGIDAt(tiledPos);
+	if (tiledGid5 != 0) {
+		Value properties5 = m_map->getPropertiesForGID(tiledGid5);
+		ValueMap propertiesMap5 = properties5.asValueMap();
+		if (propertiesMap5.find("Upfloor") != propertiesMap5.end()) {
+			Value prop5 = properties5.asValueMap().at("Upfloor");
+			m_map->setVisible(false);
+		}
+
+	}
+
 	return true;
 
 }
@@ -237,7 +342,7 @@ Point Player::tileCoordForPosition(Point pos)
 }
 
 
-
+//人物移动函数
 void Player::Move(EventKeyboard::KeyCode keyCode, Event* event)
 {
 	Size spritesize = m_sprite->getContentSize();
@@ -291,3 +396,53 @@ void Player::Move(EventKeyboard::KeyCode keyCode, Event* event)
 			break;
 	}
 }
+
+/*******************************************************************
+* 该功能已经实现，但无法在Player中引用BattleScene导致其被搁置          *
+********************************************************************/
+//根据怪物的属性、类别实现角色战斗后属性变化
+// oid AttibuteChange(Enemy curEnemy, Point tiledPos, Player * player)
+//{
+//	if (curEnemy.get_kind() == Normal)
+//	{
+//		if (curEnemy.get_atk() >= player->get_hp() + player->get_def() || curEnemy.get_def() > player->get_atk())
+//			;
+//		else
+//		{
+//			int DropOfBlood = curEnemy.get_atk() - player->get_def();
+//			player->set_hp((DropOfBlood >= 0 ? player->get_hp() - DropOfBlood : player->get_hp()));
+//			player->enemy->removeTileAt(tiledPos);
+//		}
+//	}
+//	if (curEnemy.get_kind() == RealATK)
+//	{
+//		if (curEnemy.get_atk() >= player->get_hp() || curEnemy.get_def() > player->get_atk())
+//			;
+//		else
+//		{
+//			int DropOfBlood = curEnemy.get_atk();
+//			player->set_hp((DropOfBlood >= 0 ? player->get_hp() - DropOfBlood : player->get_hp()));
+//			player->enemy->removeTileAt(tiledPos);
+//		}
+//
+//	}
+//	if (curEnemy.get_kind() == CriticalHit)
+//	{
+//		srand((unsigned int)time(0)); // 设置随机数种子
+//		bool isCritialHit = random() % 10 > 4 ? true : false;
+//		if (isCritialHit)
+//		{
+//			curEnemy.set_atk(player->get_atk() * 2);
+//			if (curEnemy.get_atk() >= player->get_hp() + player->get_def() || curEnemy.get_def() > player->get_atk())
+//				;
+//			else
+//			{
+//				int DropOfBlood = curEnemy.get_atk() - player->get_def();
+//				player->set_hp((DropOfBlood >= 0 ? player->get_hp() - DropOfBlood : player->get_hp()));
+//				player->enemy->removeTileAt(tiledPos);
+//			}
+//		}
+//	}
+//	player->add_exp(curEnemy.get_exp());
+//	player->add_coin(curEnemy.get_coin());
+//}
