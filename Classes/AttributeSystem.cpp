@@ -1,35 +1,44 @@
 #include "AttributeSystem.h"
+//初始人物属性
+int AttributeSystem::playergrade = 1;
+int AttributeSystem::playerhp =1000;
+int AttributeSystem::playeratk = 10;
+int AttributeSystem::playerdef =10;
+int AttributeSystem::playercoin = 0;
+int AttributeSystem::playerexp = 0;
+int AttributeSystem::redkey = 1;
+int AttributeSystem::bluekey = 1;
+int AttributeSystem::yellowkey = 3;
+int AttributeSystem::floornum = 1;
 
-AttributeSystem::AttributeSystem() :
-	playergrade(0),
-	playerhp(0),
-	playeratk(0),
-	playerdef(0),
-	playercoin(0),
-	playerexp(0),
-	redkey(0),
-	bluekey(0),
-	yellowkey(0),
-	floornum(0)
+Layer* AttributeSystem::createScene(Player* temp)
 {
+	playergrade += temp->get_level();
+	playerhp += temp->get_hp();
+	playeratk += temp->get_atk();
+	playerdef += temp->get_def();
+	playercoin += temp->get_coin();
+	playerexp += temp->get_coin();
+	redkey += temp->get_redKey();
+	bluekey += temp->get_blueKey();
+	yellowkey += temp->get_yellowKey();
 
-}
-
-AttributeSystem::~AttributeSystem()
-{
-
-}
-
-Layer* AttributeSystem::createScene()
-{
 	return AttributeSystem::create();
 }
+
+//void AttributeSystem::update(float dt)
+//{
+//	this->removeFromParentAndCleanup(true);
+//	auto scene = create();
+//	this->addChild(scene);
+//
+//}
 
 bool AttributeSystem::init()
 {
 	if (!Layer::init())
 		return false;
-
+	/*this->scheduleUpdate();*/
 	auto sprite = Sprite::create("floor.png");
 	sprite->setPosition(Vec2(95, 105));
 	this->addChild(sprite, 0);
@@ -66,7 +75,7 @@ bool AttributeSystem::init()
 	this->addChild(PlayerExp);
 
 	//钥匙数量
-	 //红钥匙
+	//红钥匙
 	auto RedKey = Label::createWithTTF(Change(redkey), "fonts/arial.ttf", 30);
 	RedKey->setPosition(Vec2(115, 140));
 	this->addChild(RedKey);
@@ -83,7 +92,7 @@ bool AttributeSystem::init()
 
 	//地图层数
 	auto FloorNum = Label::createWithTTF(Change(floornum), "fonts/arial.ttf", 24);
-	FloorNum->setPosition(Vec2(98,105));
+	FloorNum->setPosition(Vec2(98, 105));
 	this->addChild(FloorNum);
 
 	return true;

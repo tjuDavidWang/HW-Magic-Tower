@@ -4,11 +4,12 @@
 
 #include"cocos2d.h"
 #include "Entity.h"
+#include<vector>
 USING_NS_CC;
-
+using namespace std;
 //0-9号怪物分别对应骷髅头头，绿色史莱姆，红色史莱姆，小蝙蝠，初级法师，骷髅人，骷髅士兵，初级卫兵
 //分别是：hp,atk,def,coin,kind
-enum EnemyType {Normal,RealATK,CriticalHit};
+enum EnemyType { Normal, RealATK, CriticalHit };
 int EnemyInfoList[8][5] = {
 	{100,65,15,30,CriticalHit},
 	{35,18,1,1,Normal},
@@ -19,17 +20,16 @@ int EnemyInfoList[8][5] = {
 	{55,52,12,8,RealATK},
 	{50,48,22,12,CriticalHit}
 };
-class Enemy :public Entity {
+class Enemy {
 public:
-	CREATE_FUNC(Enemy);
-	virtual bool init();
+
 	int get_hp() { return hp; }
 	int get_atk() { return atk; }
 	int get_def() { return def; }
 	int get_exp() { return exp; }
 	int get_coin() { return coin; }
 	int get_kind() { return kind; }
-
+	void set_atk(int dst_atk) { atk = dst_atk; }
 	Enemy();
 	Enemy(int num);
 private:

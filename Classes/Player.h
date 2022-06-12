@@ -4,6 +4,8 @@
 #include"ControllerListener.h"
 #include"Controller.h"
 #include "Entity.h"
+#include "TollgateScene.h"
+#include"StartScene.h"
 class Player :public Entity {
 public:
 	CREATE_FUNC(Player);
@@ -13,11 +15,24 @@ public:
 	void rundown();
 	void runleft();
 	void runright();
-
-	void setTiledMap(TMXTiledMap* map, Point Pos);
+	//获取瓦片地图
+	void setTiledMap(TMXTiledMap* map, Point Pos, Layer* layer1, Layer* layer2);
+	//坐标位置判断
 	virtual bool setTagPosition(int x, int y);
+	//人物移动
 	void Move(EventKeyboard::KeyCode keyCode, Event* event);
-
+	Player& operator=(const Player& temp)
+	{
+		if (this == &temp)
+			return *this;
+		this->hp = temp.hp;
+		this->atk = temp.atk;
+		this->def = temp.def;
+		this->coin = temp.coin;
+		this->exp = temp.exp;
+		this->level = temp.level;
+		return *this;
+	}
 	int get_hp() { return hp; }
 	int get_atk() { return atk; }
 	int get_def() { return def; }
@@ -27,7 +42,8 @@ public:
 	int get_yellowKey() { return yellowKey; }
 	int get_blueKey() { return blueKey; }
 	int get_redKey() { return redKey; }
-
+	//判断切换场景
+	bool up_floor = 0;
 private:
 	//标记主角是否碰撞障碍物
 	bool  isJumping;
@@ -40,6 +56,21 @@ private:
 
 	//检测门的地图层
 	TMXLayer* door;
+
+	//检测楼梯的地图层
+	TMXLayer* stair;
+
+	//检测敌人的地图层
+	TMXLayer* enemy;
+
+	//检测商店的地图层
+	TMXLayer* shop;
+
+	//战斗场景层
+	Layer* mLayer1;
+
+	//商店场景层
+	Layer* mLayer2;
 
 	//将像素坐标转换为地图格子坐标
 	Point tileCoordForPosition(Point pos);
@@ -56,6 +87,8 @@ private:
 	int yellowKey;
 	int blueKey;
 	int redKey;
+
+
 
 };
 #endif

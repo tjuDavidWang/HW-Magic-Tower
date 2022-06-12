@@ -63,8 +63,10 @@ list(APPEND GAME_SOURCE
      Classes/Entity.cpp
      Classes/Player.cpp
      Classes/TollgateScene.cpp
+     Classes/NumberChange.cpp
      Classes/MusicController.cpp
      Classes/StartScene.cpp
+     Classes/StoreScene.cpp
      Classes/Prop.cpp
      Classes/Enemy.cpp
      Classes/BattleScene.cpp
@@ -79,7 +81,9 @@ list(APPEND GAME_HEADER
      Classes/Player.h
      Classes/TollgateScene.h
      Classes/MusicController.h
+     Classes/NumberChange.h
      Classes/StartScene.h
+     Classes/StoreScene.h
      Classes/Prop.h
      Classes/Enemy.h
      Classes/BattleScene.h
